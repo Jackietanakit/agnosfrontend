@@ -1,7 +1,11 @@
+import { useState } from "react";
 import Head from "next/head";
-import Link from "next/link";
+import PainImage from "../components/PainImage";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
-const Home: React.FC = () => {
+const PainSelector: React.FC = () => {
+  const [painType, setPainType] = useState<string | null>(null);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
       <Head>
@@ -14,22 +18,42 @@ const Home: React.FC = () => {
       </Head>
 
       <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <h1 className="text-4xl font-bold mb-8">Pain Selector</h1>
-        <div className="flex space-x-4">
-          <Link href="/hand-pain" passHref>
-            <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
-              Hand Pain
+        <div className="w-full flex justify-start px-4 py-2">
+          {painType && (
+            <button
+              className="text-gray-500 hover:text-gray-700"
+              onClick={() => setPainType(null)}
+            >
+              <ArrowLeftIcon className="h-6 w-6" />
             </button>
-          </Link>
-          <Link href="/abs-pain" passHref>
-            <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">
-              Abs Pain
-            </button>
-          </Link>
+          )}
         </div>
+
+        <h1 className="text-4xl font-bold mb-8 font-prompt">เลือกส่วนที่ปวด</h1>
+        {!painType ? (
+          <div className="flex space-x-4">
+            <button
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+              onClick={() => setPainType("Hand")}
+            >
+              ปวดบริเวณมือ
+            </button>
+            <button
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
+              onClick={() => setPainType("Abs")}
+            >
+              ปวดบริเวณท้อง
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center">
+            <h2 className="text-2xl font-bold mb-4">ปวดบริเวณไหน กดเลย!</h2>
+            <PainImage type={painType} />
+          </div>
+        )}
       </main>
     </div>
   );
 };
 
-export default Home;
+export default PainSelector;

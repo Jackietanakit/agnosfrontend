@@ -1,4 +1,4 @@
-import { PartData } from "@/data/partsData";
+import { PartPoint } from "@/data/partsData";
 import * as d3 from "d3-voronoi";
 
 export const calculateVoronoiCells = (
@@ -6,7 +6,7 @@ export const calculateVoronoiCells = (
   height: number,
   scaleX: number,
   scaleY: number,
-  data: PartData[]
+  data: PartPoint[]
 ) => {
   const voronoi = d3.voronoi().extent([
     [0, 0],
@@ -17,7 +17,7 @@ export const calculateVoronoiCells = (
 
   // Create a mapping of parts to their polygons
   const partToPolygon: {
-    [key: string]: { polygons: string[]; highlightName: string };
+    [key: string]: string[];
   } = {};
 
   diagram.polygons().forEach((polygon) => {
@@ -31,23 +31,17 @@ export const calculateVoronoiCells = (
 
       if (point) {
         if (!partToPolygon[point.name]) {
-          partToPolygon[point.name] = {
-            polygons: [],
-            highlightName: point.highlightName,
-          };
+          partToPolygon[point.name] = [];
         }
-        partToPolygon[point.name].polygons.push(
+        partToPolygon[point.name].push(
           polygon.map((point) => point.join(",")).join(" ")
         );
       }
     }
   });
 
-  return Object.entries(partToPolygon).map(
-    ([name, { polygons, highlightName }]) => ({
-      name: name,
-      polygons: polygons,
-      highlightName: highlightName,
-    })
-  );
+  return Object.entries(partToPolygon).map(([name, polygons]) => ({
+    name: name,
+    polygons: polygons,
+  }));
 };
