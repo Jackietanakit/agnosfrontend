@@ -1,31 +1,40 @@
-import { useState } from "react";
-import PainSelector from "./PainSelector";
+import { useState, useRef } from "react";
 import Image from "next/image";
+import PainSelector from "./PainSelector";
+import handData from "@/data/partsData";
 
 const HandImage: React.FC = () => {
-  const [selectedPart, setSelectedPart] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [imageSize, setImageSize] = useState<{ width: number; height: number }>(
+    { width: 828, height: 976 }
+  );
 
   const handleSelectPart = (part: string) => {
-    setSelectedPart(part);
+    console.log(`Selected part: ${part}`);
   };
 
   return (
-    <div className="relative max-w-md mx-auto">
-      <div className="relative w-full h-120">
+    <div className="relative max-w-md mx-auto" ref={containerRef}>
+      <div className="relative w-full h-auto">
         <Image
           src="/images/default-finger.png"
           alt="Hand"
           layout="responsive"
-          width={270}
-          height={318}
+          width={imageSize.width}
+          height={imageSize.height}
           objectFit="contain"
+          onLoadingComplete={(image) => {
+            setImageSize({
+              width: image.naturalWidth,
+              height: image.naturalHeight,
+            });
+          }}
         />
-        <PainSelector onSelectPart={handleSelectPart} />
-        {/* {selectedPart && (
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 bg-black text-white p-2 rounded">
-            {selectedPart}
-          </div>
-        )} */}
+        <PainSelector
+          imageSize={imageSize}
+          onSelectPart={handleSelectPart}
+          data={handData}
+        />
       </div>
     </div>
   );
