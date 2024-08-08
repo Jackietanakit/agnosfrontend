@@ -19,18 +19,18 @@ const PainSelector: React.FC<PainSelectorProps> = ({
 
   useEffect(() => {
     const { width, height } = imageSize;
-    const scaleX = width / imageSize.width;
-    const scaleY = height / imageSize.height;
+
+    const scaledX = imageSize.width / 828;
+    const scaledY = imageSize.height / 976;
 
     const scaledCells = calculateVoronoiCells(
       width,
       height,
-      scaleX,
-      scaleY,
+      scaledX, // Scaling is handled inside the calculateVoronoiCells function
+      scaledY,
       data
     );
     setCells(scaledCells);
-    console.log(cells);
   }, [imageSize, data]);
 
   return (

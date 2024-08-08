@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import PainSelector from "./PainSelector";
 import handData from "@/data/partsData";
@@ -8,6 +8,27 @@ const HandImage: React.FC = () => {
   const [imageSize, setImageSize] = useState<{ width: number; height: number }>(
     { width: 828, height: 976 }
   );
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        if (entry.contentRect) {
+          const { width, height } = entry.contentRect;
+          setImageSize({ width, height });
+        }
+      }
+    });
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        resizeObserver.unobserve(containerRef.current);
+      }
+    };
+  }, []);
 
   const handleSelectPart = (part: string) => {
     console.log(`Selected part: ${part}`);
@@ -23,12 +44,6 @@ const HandImage: React.FC = () => {
           width={imageSize.width}
           height={imageSize.height}
           objectFit="contain"
-          onLoadingComplete={(image) => {
-            setImageSize({
-              width: image.naturalWidth,
-              height: image.naturalHeight,
-            });
-          }}
         />
         <PainSelector
           imageSize={imageSize}
